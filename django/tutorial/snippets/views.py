@@ -5,6 +5,9 @@ from django.contrib.auth.models import User
 
 
 class SnippetList(generics.ListCreateAPIView):
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
 
