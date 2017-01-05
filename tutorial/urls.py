@@ -15,11 +15,21 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from rest_framework.schemas import get_schema_view
+from django.conf import settings
+from django.conf.urls import include, url
+from django.conf.urls.static import static
+
+
 
 schema_view = get_schema_view(title='Pastebin API')
 urlpatterns = [
     url('^schema/$', schema_view),
     url(r'^', include('snippets.urls')),
+    url(r'^comments/', include("comments.urls", namespace='comments')),
+
+    url(r'^', include("articles.urls", namespace='articles')),
+    url(r'^api/articles/', include("articles.api.urls", namespace='articles-api')),
+    #url(r'^posts/$', "<appname>.views.<function_name>"),
 ]
 
 

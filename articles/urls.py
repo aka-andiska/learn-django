@@ -1,13 +1,11 @@
 from django.conf.urls import url
 from django.contrib import admin
 
-from .views import (
-	article_list,
-    article_create,
-    article_detail,
-    article_update,
-    article_delete,
-	)
+from .views import article_list
+from .views import article_create
+from .views import article_detail
+from .views import article_update
+from .views import article_delete
 
 urlpatterns = [
 	url(r'^$', article_list, name='list'),

@@ -11,10 +11,15 @@ from django.utils.text import slugify
 
 
 from markdown_deux import markdown
-
+from comments.models import Comment
 
 from .utils import get_read_time
+# Create your models here.
+# MVC MODEL VIEW CONTROLLER
 
+
+#Article.objects.all()
+#Article.objects.create(user=user, title="Some time")
 
 class ArticleManager(models.Manager):
     def active(self, *args, **kwargs):
@@ -32,7 +37,7 @@ def upload_location(instance, filename):
     Then create a queryset ordered by the "id"s of each object,
     Then we get the last object in the queryset with `.last()`
     Which will give us the most recently created Model instance
-    We add 1 to it, so we get what should be the same id as the the article we are creating.
+    We add 1 to it, so we get what should be the same id as the the post we are creating.
     """
     return "%s/%s" %(new_id, filename)
 
@@ -73,6 +78,11 @@ class Article(models.Model):
         markdown_text = markdown(content)
         return mark_safe(markdown_text)
 
+    @property
+    def comments(self):
+        instance = self
+        qs = Comment.objects.filter_by_instance(instance)
+        return qs
 
     @property
     def get_content_type(self):
@@ -93,7 +103,7 @@ def create_slug(instance, new_slug=None):
     return slug
 
 
-def pre_save_Article_receiver(sender, instance, *args, **kwargs):
+def pre_save_article_receiver(sender, instance, *args, **kwargs):
     if not instance.slug:
         instance.slug = create_slug(instance)
 
@@ -102,6 +112,8 @@ def pre_save_Article_receiver(sender, instance, *args, **kwargs):
         read_time_var = get_read_time(html_string)
         instance.read_time = read_time_var
 
+
+pre_save.connect(pre_save_article_receiver, sender=Article)
 
 
 
